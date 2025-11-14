@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Decloid{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        {% if user.is_authenticated %}
+        <a href="{% url 'servers:dashboard' %}">Mi panel</a> |
+        <form method="post" action="{% url 'logout' %}" style="display: inline">
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="nav-link"
+            style="
+              background: none;
+              border: none;
+              color: var(--accent-2);
+              font-weight: 600;
+              cursor: pointer;
+              padding: 0;
+            "
+          >
+            Cerrar sesión
+          </button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}">Iniciar sesión</a>
+        {% endif %}
+      </nav>
+    </header>
+    <main>
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% block content %}{% endblock %}
+    </main>
+
+    <script src="/static/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear servidor{% endblock %}
+
+{% block content %}
+<h1>Crear servidor</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <div style="display: grid; gap: 8px;">
+    <label>Nombre</label>
+    {{ form.name }}
+
+    <label>Imagen</label>
+    {{ form.image }}
+
+    <label>Puerto (host)</label>
+    {{ form.port }}
+
+    <label>RAM (MB)</label>
+    {{ form.ram }}
+
+    <label>CPU (cores)</label>
+    {{ form.cpu }}
+
+    <label>Almacenamiento (MB)</label>
+    {{ form.storage }}
+  </div>
+
+  <button type="submit">Crear</button>
+</form>
+
+<p><a href="{% url 'servers:dashboard' %}">Volver</a></p>
+{% endblock %}

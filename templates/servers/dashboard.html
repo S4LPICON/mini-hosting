@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear servidor{% endblock %}
+
+{% block content %}
+<h1>Crear servidor</h1>
+
+<p><a class="btn" href="{% url 'servers:create' %}">Crear servidor</a></p>
+
+<ul class="server-list">
+  {% for s in servers %}
+  <li class="server-card">
+    <div class="server-header">
+      {# Selección de imagen según tipo #}
+      {% if s.image and 'minecraft' in s.image %}
+        <img src="{% static 'img/mc.avif' %}" class="server-image-large" alt="minecraft banner" />
+      {% elif s.image and 'ubuntu' in s.image %}
+        <img src="{% static 'img/ubuntu.png' %}" class="server-image-large" alt="ubuntu banner" />
+      {% elif s.image and s.image.url %}
+        <img src="{{ s.image.url }}" class="server-image" width="96" height="64" />
+      {% else %}
+        <img src="{% static 'img/server-placeholder.svg' %}" class="server-image" width="96" height="64" />
+      {% endif %}
+
+      {# Overlay común para todos los servidores #}
+      <div class="server-banner-overlay">
+        <div class="banner-title">{{ s.name }}</div>
+        <div class="banner-status">
+          <div class="status-badge {% if s.status == 'running' %}running{% else %}stopped{% endif %}">
+            <span class="status-dot {% if s.status == 'running' %}status-green{% else %}status-red{% endif %}"></span>
+            <span class="status-text">
+              {% if s.status == 'running' %}En funcionamiento{% else %}Detenido{% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="server-info">
+        <strong style="font-size: 1.05rem">{{ s.name }}</strong>
+        <ul class="server-info">
+
+          <!-- Imagen Docker -->
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2" fill="none"/>
+              <rect x="7" y="8" width="6" height="2" rx="1" fill="currentColor" fill-opacity="0.15"/>
+            </svg>
+            <span class="info-text">{{ s.image }}</span>
+          </li>
+
+          <!-- CPU -->
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2" fill="none"/>
+              <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" fill-opacity="0.12"/>
+            </svg>
+            <span class="info-text">CPU: {{ s.cpu }} cores</span>
+          </li>
+
+          <!-- RAM -->
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="7" width="16" height="10" rx="2" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2" fill="none"/>
+              <rect x="7" y="9" width="3" height="6" rx="1" fill="currentColor" fill-opacity="0.12"/>
+              <rect x="14" y="9" width="3" height="6" rx="1" fill="currentColor" fill-opacity="0.12"/>
+            </svg>
+            <span class="info-text">RAM: {{ s.ram }} MB</span>
+          </li>
+
+          <!-- Almacenamiento -->
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="12" cy="7" rx="7" ry="2" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2" fill="none"/>
+              <path d="M5 7v6c0 1.1 3.13 2 7 2s7-.9 7-2V7" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2" fill="none"/>
+            </svg>
+            <span class="info-text">Almacenamiento: {{ s.storage }} MB</span>
+          </li>
+
+          <!-- IP -->
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2" fill="none"/>
+              <path d="M2 12h20M12 2v20" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.2" fill="none"/>
+            </svg>
+            <span class="info-text">IP: {{ public_ip }}{% if s.port %}:{{ s.port }}{% endif %}</span>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+
+    <div class="server-actions">
+      {% if s.status == 'running' %}
+        <a class="btn" href="{% url 'servers:stop' s.pk %}">Detener</a>
+      {% else %}
+        <a class="btn positive" href="{% url 'servers:start' s.pk %}">Iniciar</a>
+      {% endif %}
+      <a class="btn negative" href="{% url 'servers:delete' s.pk %}">Eliminar</a>
+    </div>
+  </li>
+  {% empty %}
+  <li>No tienes servidores todavía.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
